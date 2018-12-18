@@ -5,6 +5,7 @@
 typedef struct Map Map;
 typedef struct Case Case;
 typedef struct Snake Snake;
+typedef struct corp corp;
 
 struct Case
 {
@@ -13,11 +14,18 @@ struct Case
 	int contenue;
 };
 
+struct corp
+{
+	int ca;
+	int dir; 
+};
+
 struct Snake
 {
-	int* cas;
+	corp* cas;
 	int dir;
 	int taille;
+	int manger;
 };
 
 struct Map
@@ -98,18 +106,27 @@ void poserFruit(Map* jeu){
 }
 
 void chunk(Map* jeu){
-	(*jeu).snake.cas=(int*)malloc(sizeof(int)*4);
+	(*jeu).snake.taille=10;
+	int t = (*jeu).snake.taille+1;
+	(*jeu).snake.cas=(corp*)malloc(sizeof(corp)*t);
 	(*jeu).pastille=5;
-	(*jeu).map[990].contenue=1;
+	for (int i = 0; i < (*jeu).snake.taille; i=i+1)
+	{
+		(*jeu).map[1170-60*i].contenue=1;
+		(*jeu).snake.cas[i].ca=1170-60*i;
+	}
+	/*(*jeu).map[990].contenue=1;
 	(*jeu).map[1050].contenue=1;
 	(*jeu).map[1110].contenue=1;
 	(*jeu).map[1170].contenue=1;
-	(*jeu).snake.cas[3]=990;
-	(*jeu).snake.cas[2]=1050;
-	(*jeu).snake.cas[1]=1110;
-	(*jeu).snake.cas[0]=1170;
+	(*jeu).snake.cas[3].ca=990;
+	(*jeu).snake.cas[2].ca=1050;
+	(*jeu).snake.cas[1].ca=1110;
+	(*jeu).snake.cas[0].ca=1170;*/
 	(*jeu).snake.dir=60;
-	(*jeu).snake.taille=3;
+	(*jeu).snake.cas[0].dir = 60;
+	(*jeu).snake.manger=0;
+	
 	for (int i = 0; i < jeu->pastille; i=i+1)
 	{
 		poserFruit(jeu);
@@ -121,12 +138,54 @@ void pausemenu(Map* jeu){
 	couleur c;
 	c = CouleurParNom("white");
 	ChoisirCouleurDessin(c);
-	RemplirRectangle(0,0,1200,800);
+	RemplirRectangle(10,78,100,20);
 	c = CouleurParNom("black");
 	ChoisirCouleurDessin(c);
 	EcrireTexte(10,100,"PAUSE",2);
 
 }
+
+void overmenu(Map* jeu){
+	couleur c;
+	c = CouleurParNom("white");
+	ChoisirCouleurDessin(c);
+	RemplirRectangle(0,0,1200,800);
+	c = CouleurParNom("black");
+	ChoisirCouleurDessin(c);
+	EcrireTexte(10,100,"GAME OVER",2);
+
+}
+
+void Agrandir(Map* jeu){
+	corp* memoire = (corp*)malloc(sizeof(corp)*((*jeu).snake.taille+1));
+	int t = (*jeu).snake.taille;
+	int i;
+	for (i = 0; i < t; i=i+1)
+	{
+		memoire[i].ca=(*jeu).snake.cas[i].ca;
+		memoire[i].dir=(*jeu).snake.cas[i].dir;
+	}
+	(*jeu).snake.taille=(*jeu).snake.taille+2;
+	(*jeu).snake.cas =realloc((*jeu).snake.cas ,sizeof(corp)*((*jeu).snake.taille+1));
+	for (i = 0; i < t; i=i+1)
+	{
+		(*jeu).snake.cas[i].ca=memoire[i].ca;
+		(*jeu).snake.cas[i].dir=memoire[i].dir;
+	}
+	(*jeu).snake.cas[t+1].ca=(*jeu).snake.cas[t].ca-(*jeu).snake.cas[t].dir;
+	(*jeu).snake.cas[t+1].dir=memoire[t].dir;
+	(*jeu).snake.cas[t+2].ca=(*jeu).snake.cas[t+1].ca-(*jeu).snake.cas[t+1].dir;
+	(*jeu).snake.cas[t+2].dir=memoire[t+1].dir;
+	(*jeu).map[(*jeu).snake.cas[t+1].ca].contenue=1;
+	(*jeu).map[(*jeu).snake.cas[t+2].ca].contenue=1;
+	free(memoire);
+
+
+	
+
+}
+
+
 
 void link(Map* jeu){
 	int q=0;
@@ -144,54 +203,91 @@ void link(Map* jeu){
 			if (t==XK_Left)
 			{
 
-				(*jeu).map[(*jeu).snake.cas[(*jeu).snake.taille]].contenue=0;
+				(*jeu).map[(*jeu).snake.cas[(*jeu).snake.taille].ca].contenue=0;
 				for (int i = (*jeu).snake.taille; i > 0; i=i-1)
 				{	
-					(*jeu).snake.cas[i]= (*jeu).snake.cas[i-1];
+					(*jeu).snake.cas[i].ca= (*jeu).snake.cas[i-1].ca;
+					(*jeu).snake.cas[i].dir= (*jeu).snake.cas[i-1].dir;
 				}
-				(*jeu).snake.dir=-1;
-				(*jeu).map[(*jeu).snake.cas[0]].contenue=1;
-				(*jeu).snake.cas[0]=(*jeu).snake.cas[0]+(*jeu).snake.dir;
-				(*jeu).map[(*jeu).snake.cas[0]].contenue=1;
+				if((*jeu).snake.dir!=1)
+				{
+					(*jeu).snake.dir=-1;
+					(*jeu).snake.cas[0].dir=-1;
+				}
+				if ((*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 2)
+				{
+				Agrandir(jeu);
+				}
+				(*jeu).map[(*jeu).snake.cas[0].ca].contenue=1;
+				(*jeu).snake.cas[0].ca=(*jeu).snake.cas[0].ca+(*jeu).snake.dir;
+				(*jeu).map[(*jeu).snake.cas[0].ca].contenue=1;
 				AfficherMap(*jeu);
 				
 			}
 			else if (t==XK_Right)
 			{
-				(*jeu).map[(*jeu).snake.cas[(*jeu).snake.taille]].contenue=0;
+				(*jeu).map[(*jeu).snake.cas[(*jeu).snake.taille].ca].contenue=0;
 				for (int i = (*jeu).snake.taille; i > 0; i=i-1)
 				{	
-					(*jeu).snake.cas[i]= (*jeu).snake.cas[i-1];
+					(*jeu).snake.cas[i].ca= (*jeu).snake.cas[i-1].ca;
+					(*jeu).snake.cas[i].dir= (*jeu).snake.cas[i-1].dir;
 				}
-				(*jeu).snake.dir=1;
-				(*jeu).snake.cas[0]=(*jeu).snake.cas[0]+(*jeu).snake.dir;
-				(*jeu).map[(*jeu).snake.cas[0]].contenue=1;
+				if((*jeu).snake.dir!=-1)
+				{
+					(*jeu).snake.dir=1;
+					(*jeu).snake.cas[0].dir=1;
+				}
+				if ((*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 2)
+				{
+				Agrandir(jeu);
+				}
+				(*jeu).snake.cas[0].ca=(*jeu).snake.cas[0].ca+(*jeu).snake.dir;
+				(*jeu).map[(*jeu).snake.cas[0].ca].contenue=1;
 				AfficherMap(*jeu);
 				
 			}
 			else if (t==XK_Up)
 			{
-				(*jeu).map[(*jeu).snake.cas[(*jeu).snake.taille]].contenue=0;
+				(*jeu).map[(*jeu).snake.cas[(*jeu).snake.taille].ca].contenue=0;
 				for (int i = (*jeu).snake.taille; i > 0; i=i-1)
 				{	
-					(*jeu).snake.cas[i]= (*jeu).snake.cas[i-1];
+					(*jeu).snake.cas[i].ca= (*jeu).snake.cas[i-1].ca;
+					(*jeu).snake.cas[i].dir= (*jeu).snake.cas[i-1].dir;
 				}
-				(*jeu).snake.dir=-60;
-				(*jeu).snake.cas[0]=(*jeu).snake.cas[0]+(*jeu).snake.dir;
-				(*jeu).map[(*jeu).snake.cas[0]].contenue=1;
+				if((*jeu).snake.dir!=60)
+				{
+					(*jeu).snake.dir=-60;
+					(*jeu).snake.cas[0].dir=-60;
+				}
+				if ((*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 2)
+				{
+					Agrandir(jeu);
+				}
+				(*jeu).snake.cas[0].ca=(*jeu).snake.cas[0].ca+(*jeu).snake.dir;
+				(*jeu).map[(*jeu).snake.cas[0].ca].contenue=1;
 				AfficherMap(*jeu);
 				
 			}
 			else if (t==XK_Down)
 			{
-				(*jeu).map[(*jeu).snake.cas[(*jeu).snake.taille]].contenue=0;
+
+				(*jeu).map[(*jeu).snake.cas[(*jeu).snake.taille].ca].contenue=0;
 				for (int i = (*jeu).snake.taille; i > 0; i=i-1)
 				{	
-					(*jeu).snake.cas[i]= (*jeu).snake.cas[i-1];
+					(*jeu).snake.cas[i].ca= (*jeu).snake.cas[i-1].ca;
+					(*jeu).snake.cas[i].dir= (*jeu).snake.cas[i-1].dir;
 				}
-				(*jeu).snake.dir=60;
-				(*jeu).snake.cas[0]=(*jeu).snake.cas[0]+(*jeu).snake.dir;
-				(*jeu).map[(*jeu).snake.cas[0]].contenue=1;
+				if((*jeu).snake.dir!=-60)
+				{
+					(*jeu).snake.dir=60;
+					(*jeu).snake.cas[0].dir=60;
+				}
+				if ((*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 2)
+				{
+					Agrandir(jeu);
+				}
+				(*jeu).snake.cas[0].ca=(*jeu).snake.cas[0].ca+(*jeu).snake.dir;
+				(*jeu).map[(*jeu).snake.cas[0].ca].contenue=1;
 				AfficherMap(*jeu);
 				
 
@@ -216,14 +312,33 @@ void link(Map* jeu){
 		}
 		else 
 		{
-			(*jeu).map[(*jeu).snake.cas[(*jeu).snake.taille]].contenue=0;
+			if ((*jeu).snake.cas[0].ca+(*jeu).snake.dir>2399 || (*jeu).snake.cas[0].ca+(*jeu).snake.dir<0)
+			{
+				AfficherMap(*jeu);
+				overmenu(jeu);
+				q=1;
+				break;
+			}
+			else if (((*jeu).snake.cas[0].ca % 60 == 59 && (*jeu).snake.dir == 1) || ((*jeu).snake.cas[0].ca % 60 == 0 && (*jeu).snake.dir == -1))
+			{
+				AfficherMap(*jeu);
+				overmenu(jeu);
+				q=1;
+				break;
+			}
+			if ((*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 2)
+			{
+				Agrandir(jeu);
+			}
+			(*jeu).map[(*jeu).snake.cas[(*jeu).snake.taille].ca].contenue=0;
 			for (int i = (*jeu).snake.taille; i > 0; i=i-1)
 			{
-				(*jeu).snake.cas[i]= (*jeu).snake.cas[i-1];
+				(*jeu).snake.cas[i].ca= (*jeu).snake.cas[i-1].ca;
+				(*jeu).snake.cas[i].dir= (*jeu).snake.cas[i-1].dir;
 			}
-			(*jeu).snake.cas[0]=(*jeu).snake.cas[0]+(*jeu).snake.dir;
+			(*jeu).snake.cas[0].ca=(*jeu).snake.cas[0].ca+(*jeu).snake.dir;
 		
-			(*jeu).map[(*jeu).snake.cas[0]].contenue=1;
+			(*jeu).map[(*jeu).snake.cas[0].ca].contenue=1;
 			
 			AfficherMap(*jeu);
 		}
@@ -239,6 +354,7 @@ void link(Map* jeu){
 void Partie(Map* jeu){
 	InitMap(jeu);
 	chunk(jeu);
+	//AfficherMap(*jeu);
 	link(jeu);
 }
 
