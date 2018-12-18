@@ -106,14 +106,18 @@ void poserFruit(Map* jeu){
 }
 
 void chunk(Map* jeu){
-	(*jeu).snake.taille=10;
+	(*jeu).snake.taille=9;
 	int t = (*jeu).snake.taille+1;
-	(*jeu).snake.cas=(corp*)malloc(sizeof(corp)*t);
+	(*jeu).snake.cas=(corp*)malloc(sizeof(corp)*2400);
 	(*jeu).pastille=5;
 	for (int i = 0; i < (*jeu).snake.taille; i=i+1)
 	{
 		(*jeu).map[1170-60*i].contenue=1;
 		(*jeu).snake.cas[i].ca=1170-60*i;
+	}
+	if((*jeu).snake.taille==0){
+		(*jeu).map[1170].contenue=1;
+		(*jeu).snake.cas[0].ca=1170;
 	}
 	/*(*jeu).map[990].contenue=1;
 	(*jeu).map[1050].contenue=1;
@@ -157,16 +161,16 @@ void overmenu(Map* jeu){
 }
 
 void Agrandir(Map* jeu){
-	corp* memoire = (corp*)malloc(sizeof(corp)*((*jeu).snake.taille+1));
+	/*corp* memoire = (corp*)malloc(sizeof(corp)*((*jeu).snake.taille+1));
 	int t = (*jeu).snake.taille;
 	int i;
 	for (i = 0; i < t; i=i+1)
 	{
 		memoire[i].ca=(*jeu).snake.cas[i].ca;
 		memoire[i].dir=(*jeu).snake.cas[i].dir;
-	}
+	}*/
 	(*jeu).snake.taille=(*jeu).snake.taille+2;
-	(*jeu).snake.cas =realloc((*jeu).snake.cas ,sizeof(corp)*((*jeu).snake.taille+1));
+	/*(*jeu).snake.cas =realloc((*jeu).snake.cas ,sizeof(corp)*((*jeu).snake.taille+1));
 	for (i = 0; i < t; i=i+1)
 	{
 		(*jeu).snake.cas[i].ca=memoire[i].ca;
@@ -178,7 +182,7 @@ void Agrandir(Map* jeu){
 	(*jeu).snake.cas[t+2].dir=memoire[t+1].dir;
 	(*jeu).map[(*jeu).snake.cas[t+1].ca].contenue=1;
 	(*jeu).map[(*jeu).snake.cas[t+2].ca].contenue=1;
-	free(memoire);
+	free(memoire);*/
 
 
 	
