@@ -222,6 +222,14 @@ void link(Map* jeu){
 				{
 				Agrandir(jeu);
 				}
+				if ((*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 1)
+				{
+					AfficherMap(*jeu);
+					overmenu(jeu);
+					q=1;
+					break;
+				
+				}
 				(*jeu).map[(*jeu).snake.cas[0].ca].contenue=1;
 				(*jeu).snake.cas[0].ca=(*jeu).snake.cas[0].ca+(*jeu).snake.dir;
 				(*jeu).map[(*jeu).snake.cas[0].ca].contenue=1;
@@ -267,6 +275,14 @@ void link(Map* jeu){
 				{
 					Agrandir(jeu);
 				}
+				if ((*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 1)
+				{
+					AfficherMap(*jeu);
+					overmenu(jeu);
+					q=1;
+					break;
+				
+				}
 				(*jeu).snake.cas[0].ca=(*jeu).snake.cas[0].ca+(*jeu).snake.dir;
 				(*jeu).map[(*jeu).snake.cas[0].ca].contenue=1;
 				AfficherMap(*jeu);
@@ -289,6 +305,14 @@ void link(Map* jeu){
 				if ((*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 2)
 				{
 					Agrandir(jeu);
+				}
+				if ((*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 1)
+				{
+					AfficherMap(*jeu);
+					overmenu(jeu);
+					q=1;
+					break;
+				
 				}
 				(*jeu).snake.cas[0].ca=(*jeu).snake.cas[0].ca+(*jeu).snake.dir;
 				(*jeu).map[(*jeu).snake.cas[0].ca].contenue=1;
@@ -330,6 +354,14 @@ void link(Map* jeu){
 				q=1;
 				break;
 			}
+			if ((*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 1)
+				{
+					AfficherMap(*jeu);
+					overmenu(jeu);
+					q=1;
+					break;
+				
+				}
 			if ((*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 2)
 			{
 				Agrandir(jeu);
