@@ -1,7 +1,7 @@
 #include<stdlib.h>
 #include<graph.h>
 #include<time.h>
-#define CYCLE 10000L
+#define CYCLE 1000L
 typedef struct Map Map;
 typedef struct Case Case;
 typedef struct Snake Snake;
@@ -32,6 +32,8 @@ struct Map
 {
 	Case* map;
 	int sizem;
+	int sx;
+	int sy;
 	Snake snake;
 	int pastille;
 	int niveau;
@@ -40,6 +42,8 @@ struct Map
 void AfficherMap(Map jeu){
 	couleur c;
 	ChoisirEcran(1);
+	char* cou[7] = {"purple","blue","red","yellow","pink","black","grey"};
+	srand(time(NULL));
 	for (int i = 0; i < jeu.sizem; i=i+1)
 	{
 		if (jeu.map[i].contenue == 0)
@@ -72,6 +76,15 @@ void AfficherMap(Map jeu){
 				ChoisirCouleurDessin(c);
 				DessinerRectangle(jeu.map[i].cy,jeu.map[i].cx,20,20);
 			}
+		else if (jeu.map[i].contenue == 3)
+		{
+			c = CouleurParNom("black");
+			ChoisirCouleurDessin(c);
+			RemplirRectangle(jeu.map[i].cy,jeu.map[i].cx,20,20);
+			c = CouleurParNom("black");
+			ChoisirCouleurDessin(c);
+			DessinerRectangle(jeu.map[i].cy,jeu.map[i].cx,20,20);
+		}
 	}
 	CopierZone(1,0,0,0,1200,800,0,0);
 	ChoisirEcran(0);
@@ -82,9 +95,9 @@ void AfficherMap(Map jeu){
 void InitMap(Map* jeu){
 	jeu->map = (Case*)malloc(sizeof(Case)*jeu->sizem);
 	int c;
-	for (int i = 0,c = 0; i < 40; i=i+1)
+	for (int i = 0,c = 0; i < (*jeu).sy; i=i+1)
 	{
-		for (int y = 0; y < 60 ;y=y+1,c=c+1)
+		for (int y = 0; y < (*jeu).sx ;y=y+1,c=c+1)
 		{
 			(*jeu).map[c].cy=20*y;
 			(*jeu).map[c].cx=20*i;
@@ -94,9 +107,9 @@ void InitMap(Map* jeu){
 }
 
 void poserFruit(Map* jeu){
-	srand(time(NULL));
+
 	int cs = rand()%jeu->sizem+0;
-	while((*jeu).map[cs].contenue==1 || (*jeu).map[cs].contenue==2|| (*jeu).map[cs-1].contenue==2|| (*jeu).map[cs+1].contenue==2|| (*jeu).map[cs-60].contenue==2|| (*jeu).map[cs+60].contenue==2){
+	while((*jeu).map[cs].contenue==1 || (*jeu).map[cs].contenue==2|| (*jeu).map[cs-1].contenue==2|| (*jeu).map[cs+1].contenue==2|| (*jeu).map[cs-60].contenue==2|| (*jeu).map[cs+60].contenue==2 || (*jeu).map[cs].contenue==3){
 		cs = rand()%jeu->sizem+0;
 	}
 	(*jeu).map[cs].contenue=2;
@@ -105,35 +118,41 @@ void poserFruit(Map* jeu){
 
 }
 
+void poserObs(Map* jeu){
+	int cd = rand()%jeu->sizem+0;
+	while((*jeu).map[cd].contenue==1 || (*jeu).map[cd].contenue==2|| (*jeu).map[cd-1].contenue==2|| (*jeu).map[cd+1].contenue==2|| (*jeu).map[cd-60].contenue==2|| (*jeu).map[cd+60].contenue==2 || (*jeu).map[cd].contenue==3){
+		cd = rand()%jeu->sizem+0;
+	}
+	(*jeu).map[cd].contenue=3;
+
+
+}
+
 void chunk(Map* jeu){
+	int sizem1 = ((*jeu).sizem/2)-((*jeu).sx/2);
 	(*jeu).snake.taille=9;
+	jeu->snake.manger = 0;
 	int t = (*jeu).snake.taille+1;
-	(*jeu).snake.cas=(corp*)malloc(sizeof(corp)*2400);
-	(*jeu).pastille=5;
 	for (int i = 0; i < (*jeu).snake.taille; i=i+1)
 	{
-		(*jeu).map[1170-60*i].contenue=1;
-		(*jeu).snake.cas[i].ca=1170-60*i;
+		(*jeu).map[sizem1-(*jeu).sx*i].contenue=1;
+		(*jeu).snake.cas[i].ca=sizem1-(*jeu).sx*i;
 	}
 	if((*jeu).snake.taille==0){
-		(*jeu).map[1170].contenue=1;
-		(*jeu).snake.cas[0].ca=1170;
+		(*jeu).map[sizem1].contenue=1;
+		(*jeu).snake.cas[0].ca=sizem1;
 	}
-	/*(*jeu).map[990].contenue=1;
-	(*jeu).map[1050].contenue=1;
-	(*jeu).map[1110].contenue=1;
-	(*jeu).map[1170].contenue=1;
-	(*jeu).snake.cas[3].ca=990;
-	(*jeu).snake.cas[2].ca=1050;
-	(*jeu).snake.cas[1].ca=1110;
-	(*jeu).snake.cas[0].ca=1170;*/
-	(*jeu).snake.dir=60;
-	(*jeu).snake.cas[0].dir = 60;
+	(*jeu).snake.dir=(*jeu).sx;
+	(*jeu).snake.cas[0].dir = (*jeu).sx;
 	(*jeu).snake.manger=0;
 	
 	for (int i = 0; i < jeu->pastille; i=i+1)
 	{
 		poserFruit(jeu);
+	}
+	for (int i = 0; i < jeu->niveau; i=i+1)
+	{
+		poserObs(jeu);
 	}
 	
 }
@@ -159,34 +178,19 @@ void overmenu(Map* jeu){
 	EcrireTexte(10,100,"GAME OVER",2);
 
 }
+void nextmenu(Map* jeu){
+	couleur c;
+	c = CouleurParNom("white");
+	ChoisirCouleurDessin(c);
+	RemplirRectangle(0,0,1200,800);
+	c = CouleurParNom("black");
+	ChoisirCouleurDessin(c);
+	EcrireTexte(10,100,"Niveau suivant",2);
+
+}
 
 void Agrandir(Map* jeu){
-	/*corp* memoire = (corp*)malloc(sizeof(corp)*((*jeu).snake.taille+1));
-	int t = (*jeu).snake.taille;
-	int i;
-	for (i = 0; i < t; i=i+1)
-	{
-		memoire[i].ca=(*jeu).snake.cas[i].ca;
-		memoire[i].dir=(*jeu).snake.cas[i].dir;
-	}*/
 	(*jeu).snake.taille=(*jeu).snake.taille+2;
-	/*(*jeu).snake.cas =realloc((*jeu).snake.cas ,sizeof(corp)*((*jeu).snake.taille+1));
-	for (i = 0; i < t; i=i+1)
-	{
-		(*jeu).snake.cas[i].ca=memoire[i].ca;
-		(*jeu).snake.cas[i].dir=memoire[i].dir;
-	}
-	(*jeu).snake.cas[t+1].ca=(*jeu).snake.cas[t].ca-(*jeu).snake.cas[t].dir;
-	(*jeu).snake.cas[t+1].dir=memoire[t].dir;
-	(*jeu).snake.cas[t+2].ca=(*jeu).snake.cas[t+1].ca-(*jeu).snake.cas[t+1].dir;
-	(*jeu).snake.cas[t+2].dir=memoire[t+1].dir;
-	(*jeu).map[(*jeu).snake.cas[t+1].ca].contenue=1;
-	(*jeu).map[(*jeu).snake.cas[t+2].ca].contenue=1;
-	free(memoire);*/
-
-
-	
-
 }
 
 
@@ -200,6 +204,14 @@ void link(Map* jeu){
 	while(q==0){
 		if (Microsecondes()>suivant)
 		{
+		if (jeu->pastille == jeu->snake.manger)
+		{
+				q = 0;
+				jeu->pastille = jeu->pastille + 1;
+				jeu->niveau = jeu->niveau+1;
+				nextmenu(jeu);
+				break;
+		}
 		if (ToucheEnAttente())
 		{
 			
@@ -220,15 +232,30 @@ void link(Map* jeu){
 				}
 				if ((*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 2)
 				{
-				Agrandir(jeu);
+					Agrandir(jeu);
+					jeu->snake.manger = jeu->snake.manger+1;
 				}
-				if ((*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 1)
+				if ((*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 1 || (*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 3)
 				{
 					AfficherMap(*jeu);
 					overmenu(jeu);
 					q=1;
 					break;
 				
+				}
+				else if (((*jeu).snake.cas[0].ca % (*jeu).sx == (*jeu).sx-1 && (*jeu).snake.dir == 1) || ((*jeu).snake.cas[0].ca % (*jeu).sx == 0 && (*jeu).snake.dir == -1))
+				{
+					AfficherMap(*jeu);
+					overmenu(jeu);
+					q=1;
+					break;
+				}
+				else if((*jeu).snake.cas[0].ca+(*jeu).snake.dir>(*jeu).sizem-1 || (*jeu).snake.cas[0].ca+(*jeu).snake.dir<0)
+				{
+					AfficherMap(*jeu);
+					overmenu(jeu);
+					q=1;
+					break;
 				}
 				(*jeu).map[(*jeu).snake.cas[0].ca].contenue=1;
 				(*jeu).snake.cas[0].ca=(*jeu).snake.cas[0].ca+(*jeu).snake.dir;
@@ -252,6 +279,29 @@ void link(Map* jeu){
 				if ((*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 2)
 				{
 				Agrandir(jeu);
+				jeu->snake.manger = jeu->snake.manger+1;
+				}
+				if ((*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 1 || (*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 3)
+				{
+					AfficherMap(*jeu);
+					overmenu(jeu);
+					q=1;
+					break;
+				
+				}
+				else if (((*jeu).snake.cas[0].ca % (*jeu).sx == (*jeu).sx-1 && (*jeu).snake.dir == 1) || ((*jeu).snake.cas[0].ca % (*jeu).sx == 0 && (*jeu).snake.dir == -1))
+				{
+					AfficherMap(*jeu);
+					overmenu(jeu);
+					q=1;
+					break;
+				}
+				else if((*jeu).snake.cas[0].ca+(*jeu).snake.dir>(*jeu).sizem-1 || (*jeu).snake.cas[0].ca+(*jeu).snake.dir<0)
+				{
+					AfficherMap(*jeu);
+					overmenu(jeu);
+					q=1;
+					break;
 				}
 				(*jeu).snake.cas[0].ca=(*jeu).snake.cas[0].ca+(*jeu).snake.dir;
 				(*jeu).map[(*jeu).snake.cas[0].ca].contenue=1;
@@ -266,22 +316,37 @@ void link(Map* jeu){
 					(*jeu).snake.cas[i].ca= (*jeu).snake.cas[i-1].ca;
 					(*jeu).snake.cas[i].dir= (*jeu).snake.cas[i-1].dir;
 				}
-				if((*jeu).snake.dir!=60)
+				if((*jeu).snake.dir!=(*jeu).sx)
 				{
-					(*jeu).snake.dir=-60;
-					(*jeu).snake.cas[0].dir=-60;
+					(*jeu).snake.dir=-(*jeu).sx;
+					(*jeu).snake.cas[0].dir=-(*jeu).sx;
 				}
 				if ((*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 2)
 				{
 					Agrandir(jeu);
+					jeu->snake.manger = jeu->snake.manger+1;
 				}
-				if ((*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 1)
+				if ((*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 1 || (*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 3)
 				{
 					AfficherMap(*jeu);
 					overmenu(jeu);
 					q=1;
 					break;
 				
+				}
+				else if (((*jeu).snake.cas[0].ca % (*jeu).sx == (*jeu).sx-1 && (*jeu).snake.dir == 1) || ((*jeu).snake.cas[0].ca % (*jeu).sx == 0 && (*jeu).snake.dir == -1))
+				{
+					AfficherMap(*jeu);
+					overmenu(jeu);
+					q=1;
+					break;
+				}
+				else if((*jeu).snake.cas[0].ca+(*jeu).snake.dir>(*jeu).sizem-1 || (*jeu).snake.cas[0].ca+(*jeu).snake.dir<0)
+				{
+					AfficherMap(*jeu);
+					overmenu(jeu);
+					q=1;
+					break;
 				}
 				(*jeu).snake.cas[0].ca=(*jeu).snake.cas[0].ca+(*jeu).snake.dir;
 				(*jeu).map[(*jeu).snake.cas[0].ca].contenue=1;
@@ -297,22 +362,37 @@ void link(Map* jeu){
 					(*jeu).snake.cas[i].ca= (*jeu).snake.cas[i-1].ca;
 					(*jeu).snake.cas[i].dir= (*jeu).snake.cas[i-1].dir;
 				}
-				if((*jeu).snake.dir!=-60)
+				if((*jeu).snake.dir!=-(*jeu).sx)
 				{
-					(*jeu).snake.dir=60;
-					(*jeu).snake.cas[0].dir=60;
+					(*jeu).snake.dir=(*jeu).sx;
+					(*jeu).snake.cas[0].dir=(*jeu).sx;
 				}
 				if ((*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 2)
 				{
 					Agrandir(jeu);
+					jeu->snake.manger = jeu->snake.manger+1;
 				}
-				if ((*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 1)
+				if ((*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 1 || (*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 3)
 				{
 					AfficherMap(*jeu);
 					overmenu(jeu);
 					q=1;
 					break;
 				
+				}
+				else if (((*jeu).snake.cas[0].ca % (*jeu).sx == (*jeu).sx-1 && (*jeu).snake.dir == 1) || ((*jeu).snake.cas[0].ca % (*jeu).sx == 0 && (*jeu).snake.dir == -1))
+				{
+					AfficherMap(*jeu);
+					overmenu(jeu);
+					q=1;
+					break;
+				}
+				else if((*jeu).snake.cas[0].ca+(*jeu).snake.dir>(*jeu).sizem-1 || (*jeu).snake.cas[0].ca+(*jeu).snake.dir<0)
+				{
+					AfficherMap(*jeu);
+					overmenu(jeu);
+					q=1;
+					break;
 				}
 				(*jeu).snake.cas[0].ca=(*jeu).snake.cas[0].ca+(*jeu).snake.dir;
 				(*jeu).map[(*jeu).snake.cas[0].ca].contenue=1;
@@ -340,21 +420,21 @@ void link(Map* jeu){
 		}
 		else 
 		{
-			if ((*jeu).snake.cas[0].ca+(*jeu).snake.dir>2399 || (*jeu).snake.cas[0].ca+(*jeu).snake.dir<0)
+			if ((*jeu).snake.cas[0].ca+(*jeu).snake.dir>(*jeu).sizem-1 || (*jeu).snake.cas[0].ca+(*jeu).snake.dir<0)
 			{
 				AfficherMap(*jeu);
 				overmenu(jeu);
 				q=1;
 				break;
 			}
-			else if (((*jeu).snake.cas[0].ca % 60 == 59 && (*jeu).snake.dir == 1) || ((*jeu).snake.cas[0].ca % 60 == 0 && (*jeu).snake.dir == -1))
+			else if (((*jeu).snake.cas[0].ca % (*jeu).sx == (*jeu).sx-1 && (*jeu).snake.dir == 1) || ((*jeu).snake.cas[0].ca % (*jeu).sx == 0 && (*jeu).snake.dir == -1))
 			{
 				AfficherMap(*jeu);
 				overmenu(jeu);
 				q=1;
 				break;
 			}
-			if ((*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 1)
+			if ((*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 1 || (*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 3)
 				{
 					AfficherMap(*jeu);
 					overmenu(jeu);
@@ -365,6 +445,7 @@ void link(Map* jeu){
 			if ((*jeu).map[(*jeu).snake.cas[0].ca+(*jeu).snake.dir].contenue == 2)
 			{
 				Agrandir(jeu);
+				jeu->snake.manger = jeu->snake.manger+1;
 			}
 			(*jeu).map[(*jeu).snake.cas[(*jeu).snake.taille].ca].contenue=0;
 			for (int i = (*jeu).snake.taille; i > 0; i=i-1)
@@ -378,7 +459,7 @@ void link(Map* jeu){
 			
 			AfficherMap(*jeu);
 		}
-		suivant= Microsecondes()+CYCLE;
+		suivant= Microsecondes()+CYCLE-jeu->niveau;
 	}
 
 		
@@ -390,7 +471,6 @@ void link(Map* jeu){
 void Partie(Map* jeu){
 	InitMap(jeu);
 	chunk(jeu);
-	//AfficherMap(*jeu);
 	link(jeu);
 }
 
@@ -401,13 +481,21 @@ int main()
     CreerFenetre(10,10,1200,800);
     int c=0;
     int t;
-    
-    
+    jeu.niveau=0;
+    //Nombre de pastille
+    jeu.pastille=1;
+    //Taille du terrain
+    jeu.sizem = 20*30;
+    //Taille du serpent pas besoin de modifier il se change selon les cases
+    jeu.snake.cas=(corp*)malloc(sizeof(corp)*jeu.sizem);
+    //nombre de case horizontale
+    jeu.sx = 30;
+    //nombre de case verticale
+    jeu.sy= 20;
 
-    //DessinerRectangle(0,0,20,20);
-    //DessinerRectangle(0,20,20,20);
+
+    srand(time(NULL));
     
-   
   	while(c==0){
   		if (ToucheEnAttente())
   		{
@@ -418,7 +506,7 @@ int main()
   			}
   			else if (t==XK_space)
   			{
-  				jeu.sizem = 2400;
+  				
   				Partie(&jeu);
   			}
   		}
