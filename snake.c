@@ -239,6 +239,9 @@ void link(Map* jeu){
 				{
 					AfficherMap(*jeu);
 					overmenu(jeu);
+					jeu->pastille = jeu->pastille - jeu->niveau;
+					jeu->snake.manger = 0;
+					jeu->niveau=0;
 					q=1;
 					break;
 				
@@ -247,6 +250,9 @@ void link(Map* jeu){
 				{
 					AfficherMap(*jeu);
 					overmenu(jeu);
+					jeu->pastille = jeu->pastille - jeu->niveau;
+					jeu->snake.manger = 0;
+					jeu->niveau=0;
 					q=1;
 					break;
 				}
@@ -254,6 +260,9 @@ void link(Map* jeu){
 				{
 					AfficherMap(*jeu);
 					overmenu(jeu);
+					jeu->pastille = jeu->pastille - jeu->niveau;
+					jeu->snake.manger = 0;
+					jeu->niveau=0;
 					q=1;
 					break;
 				}
@@ -285,6 +294,9 @@ void link(Map* jeu){
 				{
 					AfficherMap(*jeu);
 					overmenu(jeu);
+					jeu->pastille = jeu->pastille - jeu->niveau;
+					jeu->snake.manger = 0;
+					jeu->niveau=0;
 					q=1;
 					break;
 				
@@ -293,6 +305,9 @@ void link(Map* jeu){
 				{
 					AfficherMap(*jeu);
 					overmenu(jeu);
+					jeu->pastille = jeu->pastille - jeu->niveau;
+					jeu->snake.manger = 0;
+					jeu->niveau=0;
 					q=1;
 					break;
 				}
@@ -300,6 +315,9 @@ void link(Map* jeu){
 				{
 					AfficherMap(*jeu);
 					overmenu(jeu);
+					jeu->pastille = jeu->pastille - jeu->niveau;
+					jeu->snake.manger = 0;
+					jeu->niveau=0;
 					q=1;
 					break;
 				}
@@ -330,6 +348,9 @@ void link(Map* jeu){
 				{
 					AfficherMap(*jeu);
 					overmenu(jeu);
+					jeu->pastille = jeu->pastille - jeu->niveau;
+					jeu->snake.manger = 0;
+					jeu->niveau=0;
 					q=1;
 					break;
 				
@@ -338,6 +359,9 @@ void link(Map* jeu){
 				{
 					AfficherMap(*jeu);
 					overmenu(jeu);
+					jeu->pastille = jeu->pastille - jeu->niveau;
+					jeu->snake.manger = 0;
+					jeu->niveau=0;
 					q=1;
 					break;
 				}
@@ -345,6 +369,9 @@ void link(Map* jeu){
 				{
 					AfficherMap(*jeu);
 					overmenu(jeu);
+					jeu->pastille = jeu->pastille - jeu->niveau;
+					jeu->snake.manger = 0;
+					jeu->niveau=0;
 					q=1;
 					break;
 				}
@@ -376,6 +403,9 @@ void link(Map* jeu){
 				{
 					AfficherMap(*jeu);
 					overmenu(jeu);
+					jeu->pastille = jeu->pastille - jeu->niveau;
+					jeu->snake.manger = 0;
+					jeu->niveau=0;
 					q=1;
 					break;
 				
@@ -384,6 +414,9 @@ void link(Map* jeu){
 				{
 					AfficherMap(*jeu);
 					overmenu(jeu);
+					jeu->pastille = jeu->pastille - jeu->niveau;
+					jeu->snake.manger = 0;
+					jeu->niveau=0;
 					q=1;
 					break;
 				}
@@ -391,6 +424,9 @@ void link(Map* jeu){
 				{
 					AfficherMap(*jeu);
 					overmenu(jeu);
+					jeu->pastille = jeu->pastille - jeu->niveau;
+					jeu->snake.manger = 0;
+					jeu->niveau=0;
 					q=1;
 					break;
 				}
@@ -424,6 +460,9 @@ void link(Map* jeu){
 			{
 				AfficherMap(*jeu);
 				overmenu(jeu);
+				jeu->pastille = jeu->pastille - jeu->niveau;
+				jeu->snake.manger = 0;
+				jeu->niveau=0;
 				q=1;
 				break;
 			}
@@ -431,6 +470,9 @@ void link(Map* jeu){
 			{
 				AfficherMap(*jeu);
 				overmenu(jeu);
+				jeu->pastille = jeu->pastille - jeu->niveau;
+				jeu->snake.manger = 0;
+				jeu->niveau=0;
 				q=1;
 				break;
 			}
@@ -438,6 +480,9 @@ void link(Map* jeu){
 				{
 					AfficherMap(*jeu);
 					overmenu(jeu);
+					jeu->pastille = jeu->pastille - jeu->niveau;
+					jeu->snake.manger = 0;
+					jeu->niveau=0;
 					q=1;
 					break;
 				
@@ -471,6 +516,7 @@ void link(Map* jeu){
 void Partie(Map* jeu){
 	InitMap(jeu);
 	chunk(jeu);
+	//AfficherMap(*jeu);
 	link(jeu);
 }
 
@@ -485,15 +531,15 @@ int main()
     //Nombre de pastille
     jeu.pastille=1;
     //Taille du terrain
-    jeu.sizem = 20*30;
+    jeu.sizem = 60*40;
     //Taille du serpent pas besoin de modifier il se change selon les cases
     jeu.snake.cas=(corp*)malloc(sizeof(corp)*jeu.sizem);
     //nombre de case horizontale
-    jeu.sx = 30;
+    jeu.sx = 60;
     //nombre de case verticale
-    jeu.sy= 20;
+    jeu.sy= 40;
 
-
+    
     srand(time(NULL));
     
   	while(c==0){
