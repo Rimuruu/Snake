@@ -1,0 +1,7 @@
+but : SNAKE
+
+OFILES =
+
+CC = gcc
+
+CFLAGS = -Wall -ansi -pedantic -g

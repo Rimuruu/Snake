@@ -1,0 +1,63 @@
+#include<stdlib.h>
+#include<graph.h>
+#include "Score.h"
+#include "AutresMenus.h"
+
+void pausemenu(Map* jeu){
+	couleur c;
+	c = CouleurParNom("white");
+	ChoisirCouleurDessin(c);
+	RemplirRectangle(10,78,100,20);
+	c = CouleurParNom("black");
+	ChoisirCouleurDessin(c);
+	EcrireTexte(10,100,"PAUSE",2);
+
+}
+
+void overmenu(Map* jeu,int n1, int n2, int sco){
+	couleur c;
+	c = CouleurParNom("white");
+	ChoisirCouleurDessin(c);
+	RemplirRectangle(0,0,1200,800);
+	c = CouleurParNom("black");
+	ChoisirCouleurDessin(c);
+	EcrireTexte(10,100,"GAME OVER",2);
+	niv(n1,n2);
+	score(sco);
+	int t = 0;
+	while(t == 0){
+		if (ToucheEnAttente())
+		{
+			int t = Touche();
+			if (t == XK_space)
+			{
+				t=1;
+				break;
+			}
+		}
+	}
+
+}
+void nextmenu(Map* jeu){
+	couleur c;
+	c = CouleurParNom("white");
+	ChoisirCouleurDessin(c);
+	RemplirRectangle(0,0,1200,800);
+	c = CouleurParNom("black");
+	ChoisirCouleurDessin(c);
+	EcrireTexte(10,100,"Niveau suivant",2);
+	int t = 0;
+	while(t == 0){
+		if (ToucheEnAttente())
+		{
+			int t = Touche();
+			if (t == XK_space)
+			{
+				t=1;
+				break;
+			}
+		}
+	}
+
+}
+

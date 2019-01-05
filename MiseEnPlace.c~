@@ -1,0 +1,175 @@
+#include<stdlib.h>
+#include<graph.h>
+#include "MiseEnPlace.h"
+#include<time.h>
+typedef struct Map Map;
+typedef struct Case Case;
+typedef struct Snake Snake;
+typedef struct corp corp;
+
+struct Case
+{
+	int cy;
+	int cx;
+	int contenue;
+};
+
+struct corp
+{
+	int ca;
+	int dir; 
+};
+
+struct Snake
+{
+	corp* cas;
+	int dir;
+	int taille;
+	int tailles;
+	int manger;
+};
+
+struct Map
+{
+	Case* map;
+	int sizem;
+	int sx;
+	int sy;
+	Snake snake;
+	int pastille;
+	int niveau;
+	int taillec;
+	int cyc;
+	int next;
+};
+
+
+void AfficherMap(Map jeu){
+	couleur c;
+	ChoisirEcran(1);
+	char* cou[7] = {"purple","blue","red","yellow","pink","black","grey"};
+	srand(time(NULL));
+	for (int i = 0; i < jeu.sizem; i=i+1)
+	{
+		if (jeu.map[i].contenue == 0)
+			{
+				
+				c = CouleurParNom("white");
+				ChoisirCouleurDessin(c);
+				RemplirRectangle(jeu.map[i].cy,jeu.map[i].cx,jeu.taillec,jeu.taillec);
+				c = CouleurParNom("black");
+				ChoisirCouleurDessin(c);
+				DessinerRectangle(jeu.map[i].cy,jeu.map[i].cx,jeu.taillec,jeu.taillec);
+			
+			}
+		else if (jeu.map[i].contenue == 1)
+			{
+				c = CouleurParNom("purple");
+				ChoisirCouleurDessin(c);
+				RemplirRectangle(jeu.map[i].cy,jeu.map[i].cx,jeu.taillec,jeu.taillec);
+				c = CouleurParNom("black");
+				ChoisirCouleurDessin(c);
+				DessinerRectangle(jeu.map[i].cy,jeu.map[i].cx,jeu.taillec,jeu.taillec);
+				
+			}
+		else if (jeu.map[i].contenue == 2)
+			{
+				c = CouleurParNom("green");
+				ChoisirCouleurDessin(c);
+				RemplirRectangle(jeu.map[i].cy,jeu.map[i].cx,jeu.taillec,jeu.taillec);
+				c = CouleurParNom("black");
+				ChoisirCouleurDessin(c);
+				DessinerRectangle(jeu.map[i].cy,jeu.map[i].cx,jeu.taillec,jeu.taillec);
+			}
+		else if (jeu.map[i].contenue == 3)
+		{
+			c = CouleurParNom("black");
+			ChoisirCouleurDessin(c);
+			RemplirRectangle(jeu.map[i].cy,jeu.map[i].cx,jeu.taillec,jeu.taillec);
+			c = CouleurParNom("black");
+			ChoisirCouleurDessin(c);
+			DessinerRectangle(jeu.map[i].cy,jeu.map[i].cx,jeu.taillec,jeu.taillec);
+		}
+	}
+
+	couleur black=CouleurParNom("black");
+        couleur white=CouleurParNom("white");
+	ChoisirCouleurDessin(black);
+	RemplirRectangle(0,800,1200,50);
+	ChoisirCouleurDessin(white);
+	EcrireTexte(50,840,"Niveau",2);
+	EcrireTexte(800,840,"Score :",2);
+	CopierZone(1,0,0,0,1200,850,0,0);
+	ChoisirEcran(0);
+	
+
+}
+
+void InitMap(Map* jeu){
+	jeu->map = (Case*)malloc(sizeof(Case)*jeu->sizem);
+	int c;
+	for (int i = 0,c = 0; i < (*jeu).sy; i=i+1)
+	{
+		for (int y = 0; y < (*jeu).sx ;y=y+1,c=c+1)
+		{
+			(*jeu).map[c].cy=jeu->taillec*y;
+			(*jeu).map[c].cx=jeu->taillec*i;
+			(*jeu).map[c].contenue=0;
+		}
+	}
+}
+
+void poserFruit(Map* jeu){
+
+	int cs = rand()%jeu->sizem+0;
+	while((*jeu).map[cs].contenue==1 || (*jeu).map[cs].contenue==2|| (*jeu).map[cs-1].contenue==2|| (*jeu).map[cs+1].contenue==2|| (*jeu).map[cs-60].contenue==2|| (*jeu).map[cs+60].contenue==2 || (*jeu).map[cs].contenue==3){
+		cs = rand()%jeu->sizem+0;
+	}
+	(*jeu).map[cs].contenue=2;
+
+
+
+}
+
+void poserObs(Map* jeu){
+	int cd = rand()%jeu->sizem+0;
+	while((*jeu).map[cd].contenue==1 || (*jeu).map[cd].contenue==2|| (*jeu).map[cd-1].contenue==2|| (*jeu).map[cd+1].contenue==2|| (*jeu).map[cd-60].contenue==2|| (*jeu).map[cd+60].contenue==2 || (*jeu).map[cd].contenue==3){
+		cd = rand()%jeu->sizem+0;
+	}
+	(*jeu).map[cd].contenue=3;
+
+
+}
+
+void chunk(Map* jeu){
+	int sizem1 = ((*jeu).sizem/2)-((*jeu).sx/2);
+
+	jeu->snake.manger = 0;
+	int t = (*jeu).snake.taille+1;
+	for (int i = 0; i < (*jeu).snake.taille; i=i+1)
+	{
+		(*jeu).map[sizem1-1*i].contenue=1;
+		(*jeu).snake.cas[i].ca=sizem1-1*i;
+	}
+	if((*jeu).snake.taille==0){
+		(*jeu).map[sizem1].contenue=1;
+		(*jeu).snake.cas[0].ca=sizem1;
+	}
+	(*jeu).snake.dir=1;
+	(*jeu).snake.cas[0].dir = (*jeu).sx;
+	(*jeu).snake.manger=0;
+	
+	for (int i = 0; i < jeu->pastille; i=i+1)
+	{
+		poserFruit(jeu);
+	}
+	for (int i = 0; i < jeu->niveau; i=i+1)
+	{
+		poserObs(jeu);
+	}
+	
+}
+
+void Agrandir(Map* jeu){
+	(*jeu).snake.taille=(*jeu).snake.taille+2;
+}

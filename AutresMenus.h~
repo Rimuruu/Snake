@@ -1,0 +1,8 @@
+#ifndef AUTRESMENUS_H
+#define AUTRESMENUS_H
+
+void pausemenu(Map*);
+void overmenu(Map*,int,int,int);
+void nextmenu(Map*);
+
+#endif

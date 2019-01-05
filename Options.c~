@@ -1,0 +1,106 @@
+#include<stdlib.h>
+#include<graph.>
+
+void pos1(){
+
+  couleur black=CouleurParNom("black");
+  couleur green=CouleurParNom("green");
+  couleur white=CouleurParNom("white");
+
+  ChoisirEcran(1);
+  
+  ChoisirCouleurDessin(green);
+  RemplirRectangle(0,0,1600,900);
+  ChoisirCouleurDessin(black);
+  RemplirRectangle(400,200,400,400);
+  ChoisirCouleurDessin(black);
+  RemplirRectangle(465,65,275,50);
+
+  ChoisirCouleurDessin(white);
+  EcrireTexte(570,100,"SNAKE",2);
+  EcrireTexte(480,300,"Commencer une partie",2);
+  EcrireTexte(550,400,"Options",2);
+  EcrireTexte(550,500,"Quitter",2);
+  ChoisirCouleurDessin(black);
+  EcrireTexte(415,720,"Appuyer sur ESPACE pour valider",2);
+
+  ChoisirCouleurDessin(green);
+  RemplirTriangle(445,265,445,315,465,290);
+  ChoisirCouleurDessin(black);
+  RemplirTriangle(495,365,495,415,515,390);
+  ChoisirCouleurDessin(black);
+  RemplirTriangle(495,465,495,515,515,490);
+
+  CopierZone(1,0,0,0,1200,745,0,0);
+  ChoisirEcran(0);
+}
+
+void pos2(){
+
+  couleur black=CouleurParNom("black");
+  couleur green=CouleurParNom("green");
+  couleur white=CouleurParNom("white");
+
+  ChoisirEcran(1);
+
+  ChoisirCouleurDessin(green);
+  RemplirRectangle(0,0,1600,900);
+  ChoisirCouleurDessin(black);
+  RemplirRectangle(400,200,400,400);
+  ChoisirCouleurDessin(black);
+  RemplirRectangle(465,65,275,50);
+
+  ChoisirCouleurDessin(white);
+  EcrireTexte(570,100,"SNAKE",2);
+  EcrireTexte(480,300,"Commencer une partie",2);
+  EcrireTexte(550,400,"Options",2);
+  EcrireTexte(550,500,"Quitter",2);
+  ChoisirCouleurDessin(black);
+  EcrireTexte(415,720,"Appuyer sur ESPACE pour valider",2);
+
+  ChoisirCouleurDessin(black);
+  RemplirTriangle(445,265,445,315,465,290);
+  ChoisirCouleurDessin(green);
+  RemplirTriangle(495,365,495,415,515,390);
+  ChoisirCouleurDessin(black);
+  RemplirTriangle(495,465,495,515,515,490);
+
+  CopierZone(1,0,0,0,1200,745,0,0);
+  ChoisirEcran(0);
+}
+
+void pos3(){
+
+  couleur black=CouleurParNom("black");
+  couleur green=CouleurParNom("green");
+  couleur white=CouleurParNom("white");
+
+  ChoisirEcran(1);
+
+  ChoisirCouleurDessin(green);
+  RemplirRectangle(0,0,1600,900);
+  ChoisirCouleurDessin(black);
+  RemplirRectangle(400,200,400,400);
+  ChoisirCouleurDessin(black);
+  RemplirRectangle(465,65,275,50);
+
+  ChoisirCouleurDessin(white);
+  EcrireTexte(570,100,"SNAKE",2);
+  EcrireTexte(480,300,"Commencer une partie",2);
+  EcrireTexte(550,400,"Options",2);
+  EcrireTexte(550,500,"Quitter",2);
+  ChoisirCouleurDessin(black);
+  EcrireTexte(415,720,"Appuyer sur ESPACE pour valider",2);
+
+  ChoisirCouleurDessin(black);
+  RemplirTriangle(445,265,445,315,465,290);
+  ChoisirCouleurDessin(black);
+  RemplirTriangle(495,365,495,415,515,390);
+  ChoisirCouleurDessin(green);
+  RemplirTriangle(495,465,495,515,515,490);
+
+  CopierZone(1,0,0,0,1200,745,0,0);
+  ChoisirEcran(0);
+
+}
+
